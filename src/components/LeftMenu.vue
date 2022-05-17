@@ -80,9 +80,6 @@ export default defineComponent({
         let res = await axios({
           url: `/api/user/songlist?id=${store.state.userInfo.qqNumber}`,
           method: `get`,
-          params: {
-            cookie: store.state.userInfo.cookie
-          }
         })
         // console.log(res.data);
         store.commit("setUserPlaylist", res.data.data.list);
@@ -103,7 +100,7 @@ export default defineComponent({
             id: store.state.userInfo.qqNumber
           }
         })
-        console.log(`用户收藏的歌单`,res.data.data.list);
+        // console.log(`用户收藏的歌单`,res.data.data.list);
         this.userCollectPlaylist.userCollectPlaylist = res.data.data.list
       }
 
@@ -141,6 +138,7 @@ export default defineComponent({
     background-color: #eee;
     padding-left: 10px;
     padding-right: 10px;
+    z-index: 2;
 
     .menu_title {
       font-size: 13px;
