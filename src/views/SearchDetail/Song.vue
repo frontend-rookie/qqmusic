@@ -6,28 +6,39 @@
       <div class="sort_album">专辑</div>
       <div class="sort_time">时长</div>
     </div>
-      <ul class="song_list">
+      <ul class="song_list"
+          ref="songWrapper"
+          @scroll="handleSongScroll">
         <li class="song_item" v-for="item in songArr" :key="item.songid">
           <div class="song_name">{{item.songname}}</div>
-          <div class="singer">{{item.singername}}</div>
+          <div class="singer">
+            <span class="singer_name" v-for="(singer, index) in item.singer">
+              {{singer.name}}&nbsp;&nbsp;&nbsp;
+            </span></div>
           <div class="album">{{item.albumname}}</div>
-          <div class="time">{{item.time}}</div>
+          <div class="time">{{handleSongTime(item.interval)}}</div>
         </li>
       </ul>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, onBeforeMount, reactive, toRefs} from "vue";
+import {defineComponent, onBeforeMount, reactive, toRefs, ref, onMounted, computed} from "vue";
 import axios from "axios";
 import router from "@/router";
 
 export default defineComponent( {
   name: "Song",
   setup() {
+    // ul 要检测滚动的元素
+    let songWrapper = ref();
+
     const song = reactive({
+      songWrapper: null,
       // 存储歌曲信息
       songArr: [],
+      // 当前显示的页数
+      currentPage: 1,
       /**
        * 获取搜索单曲的列表
        * */
@@ -39,11 +50,40 @@ export default defineComponent( {
             key: router.currentRoute.value.query.keyword,
             t: 0,
             pageSize: 20,
-            pageNo: 1
+            pageNo: this.currentPage
           }
         })
         // console.log(res.data);
-        this.songArr = res.data.data.list
+        // this.songArr = res.data.data.list
+        // @ts-ignore
+        this.songArr.push(...res.data.data.list)
+      },
+
+      // // song列表的高度
+      // songListHeight: computed(() => {
+      //   return songWrapper.value.clientHeight
+      // }),
+
+      /**
+       * 处理滚动条滚动事件
+       * */
+      handleSongScroll(event:any) {
+        // console.log(event.target.scrollTop);
+        if(event.target.scrollTop + event.target.clientHeight >= event.target.scrollHeight) {
+          // console.log(`滚动了底部`);
+          this.currentPage++;
+          this.getSongList();
+        }
+      },
+
+      /**
+       * 处理歌曲的总时长
+       * @param interval 秒
+       * */
+      handleSongTime(interval:number):string {
+       let min = Math.floor(interval / 60);
+       let sec = interval % 60;
+       return `${min}:${sec.toString().length === 1 ? `0${sec}` : sec}`
       }
     })
 
@@ -51,8 +91,13 @@ export default defineComponent( {
       await song.getSongList();
     })
 
+    onMounted(() => {
+      // console.log(songWrapper.value.offsetHeight);
+    })
+
     return {
-      ...toRefs(song)
+      ...toRefs(song),
+      songWrapper
     }
   }
 })
@@ -68,6 +113,7 @@ export default defineComponent( {
 .song {
   width: 100%;
   margin-top: 20px;
+
   .sort {
     width: 100%;
     display: flex;
@@ -94,7 +140,27 @@ export default defineComponent( {
   .song_list {
     list-style: none;
     width: 100%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    top: 140px;
+    overflow-y: scroll;
+    overflow-x: hidden;
 
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    /* 滚动槽 */
+    &::-webkit-scrollbar-track {
+      -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+    /* 滚动条滑块 */
+    &::-webkit-scrollbar-thumb {
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      -webkit-box-shadow: inset006pxrgba(0, 0, 0, 0.5);
+    }
 
     .song_item {
      display: flex;
@@ -108,19 +174,41 @@ export default defineComponent( {
 
       div {
         padding-left: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .song_name {
         width: 30%;
+        cursor: pointer;
+        &:hover {
+          color: #31c27c;
+          text-decoration: underline;
+
+        }
       }
       .singer {
         width: 30%;
+
+        span {
+          cursor: pointer;
+          &:hover {
+            color: #31c27c;
+          }
+        }
       }
       .album {
         width: 30%;
+        cursor: pointer;
+        &:hover {
+          color: #31c27c;
+          text-decoration: underline;
+        }
       }
       .time {
         width: 10%;
+        color: #ccc;
       }
     }
   }
