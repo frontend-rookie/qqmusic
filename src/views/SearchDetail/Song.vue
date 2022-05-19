@@ -9,8 +9,8 @@
       <ul class="song_list"
           ref="songWrapper"
           @scroll="handleSongScroll">
-        <li class="song_item" v-for="item in songArr" :key="item.songid">
-          <div class="song_name">{{item.songname}}</div>
+        <li class="song_item" v-for="(item, index) in songArr" :key="item.songid">
+          <div class="song_name" @click="handleSongNameClick(item.songmid)">{{item.songname}}</div>
           <div class="singer">
             <span class="singer_name" v-for="(singer, index) in item.singer">
               {{singer.name}}&nbsp;&nbsp;&nbsp;
@@ -26,6 +26,7 @@
 import {defineComponent, onBeforeMount, reactive, toRefs, ref, onMounted, computed} from "vue";
 import axios from "axios";
 import router from "@/router";
+import store from "@/store";
 
 export default defineComponent( {
   name: "Song",
@@ -84,6 +85,13 @@ export default defineComponent( {
        let min = Math.floor(interval / 60);
        let sec = interval % 60;
        return `${min}:${sec.toString().length === 1 ? `0${sec}` : sec}`
+      },
+
+      /**
+       * 处理歌名点击事件
+       * */
+      handleSongNameClick(songMid:string):void {
+        store.commit("setSongMid", songMid)
       }
     })
 

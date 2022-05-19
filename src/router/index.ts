@@ -13,7 +13,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/search',
     component: () => import('@/views/SearchDetail/index.vue'),
     children: [
-
       {
         path: 'song',
         component: () => import('@/views/SearchDetail/Song.vue')
@@ -25,6 +24,14 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: 'album',
         component: () => import('@/views/SearchDetail/Album.vue')
+      },
+      {
+        path: `playlist`,
+        component: () => import('@/views/SearchDetail/Playlist.vue')
+      },
+      {
+        path: `singer`,
+        component: () => import('@/views/SearchDetail/Singer.vue')
       }
     ]
   },

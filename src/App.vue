@@ -3,6 +3,7 @@
     <LeftMenu/>
     <TopSearchBar/>
     <Content/>
+    <Player/>
   </div>
 </template>
 
@@ -22,6 +23,7 @@
   import LeftMenu from "@/components/LeftMenu.vue"
   import TopSearchBar from "@/components/TopSearchBar.vue";
   import Content from "@/components/Content.vue";
+  import Player from "@/components/Player.vue"
   import axios from "axios"
   import store from "@/store";
   export default defineComponent<any>({
@@ -30,6 +32,7 @@
       LeftMenu,
       TopSearchBar,
       Content,
+      Player
     },
     setup() {
 

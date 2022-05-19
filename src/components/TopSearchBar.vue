@@ -14,7 +14,8 @@
                v-model="userSearchInput"
                @focus="handleFocus"
                @blur="handleBlur"
-               @input="handleInputChange">
+               @input="handleInputChange"
+               @keyup="handleKeyup" ref="input">
 <!--        搜索建议-->
         <div class="search_recommend_wrapper">
 <!--          搜索热词容器-->
@@ -94,13 +95,14 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onBeforeMount, reactive, toRefs, computed} from "vue";
+import {defineComponent, onBeforeMount, reactive, toRefs, computed, ref} from "vue";
 import axios from "axios"
 import router from "@/router";
 
 export default defineComponent<any> ({
   name: "TopSearchBar",
   setup() {
+    let input = ref()
     // @ts-ignore
     const search = reactive({
       /**
@@ -203,7 +205,7 @@ export default defineComponent<any> ({
       /**
        * 处理输入框change事件
        * */
-      async handleInputChange() {
+      async handleInputChange(event:any) {
         clearTimeout(search.inputTimer);
         search.inputTimer = setTimeout(async() => {
           await this.getSearchThinkWords();
@@ -215,7 +217,7 @@ export default defineComponent<any> ({
        * */
       handleItemClick(type:string, searchContent:string):void {
         /**
-         * 此处踩过的坑：
+         * 此处踩的坑：
          * 要对url进行加码
          * 有‘、\ / + -’要用encodeURIComponent， 用encodeUrl不行
          * */
@@ -224,6 +226,23 @@ export default defineComponent<any> ({
           router.push(`/search/${type}/?keyword=${encodeURIComponent(searchContent)}`)
 
         }, 500)
+      },
+
+      /**
+       * 处理按键抬起事件，判断是否按下回车
+       * */
+      handleKeyup(event:any) {
+        // console.log(event.keyCode);
+        // 按下了回车
+        if(event.keyCode == 13){
+          // 是input框失去焦点
+          input.value.blur()
+          clearTimeout(search.inputTimer)
+          router.push("/waiting")
+          setTimeout(() => {
+            router.push(`/search/song/?keyword=${encodeURIComponent(this.userSearchInput)}`)
+          }, 500)
+        }
       }
 
     })
@@ -233,7 +252,8 @@ export default defineComponent<any> ({
     })
 
     return {
-      ...toRefs(search)
+      ...toRefs(search),
+      input
     }
   }
 })

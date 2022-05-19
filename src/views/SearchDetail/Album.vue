@@ -94,6 +94,10 @@ export default defineComponent({
         height: 70px;
         vertical-align: middle;
         padding-left: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-right: 20px;
 
         img {
           width: 70px;
