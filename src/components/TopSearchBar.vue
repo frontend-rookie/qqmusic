@@ -82,7 +82,7 @@
 <!--      用户信息-->
       <div class="user_ingo_wrapper">
         <div class="user_img"></div>
-        <div class="user_name">陌黎</div>
+        <div class="user_name">『doki-doki』</div>
       </div>
 <!--      控制按钮-->
       <div class="control_wrapper">
@@ -216,6 +216,12 @@ export default defineComponent<any> ({
        * 处理搜索建议的结果被点击的事件
        * */
       handleItemClick(type:string, searchContent:string):void {
+        // console.log(input.value.value);
+        /**
+         * 这里踩的坑
+         * 和v-model绑定的input不能通过input.value来改变input框里面的值
+         * */
+        this.userSearchInput = searchContent;
         /**
          * 此处踩的坑：
          * 要对url进行加码

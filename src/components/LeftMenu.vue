@@ -102,7 +102,9 @@ export default defineComponent({
         })
         // console.log(`用户收藏的歌单`,res.data.data.list);
         this.userCollectPlaylist.userCollectPlaylist = res.data.data.list
-      }
+      },
+
+
 
     })
 

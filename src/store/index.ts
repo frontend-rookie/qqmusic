@@ -3,9 +3,9 @@ import { createStore } from 'vuex'
 export default createStore({
   state: {
     userInfo: {
-      name: '陌黎',
+      name: '『doki-doki』',
       qqNumber: `1929687026`,
-      cookie: `RK=+llsvNXUZ8; ptcz=19fad43175b7253a5d54e9e0b7914d09b4993328a293df56e8ca7d799e847bec; pgv_pvid=2840085823; fqm_pvqid=082e0584-f4b9-4157-959c-6cfb8591636f; ts_uid=2636225856; ts_refer=cn.bing.com/; fqm_sessionid=cf87eb46-6b88-46c4-8b36-c99c6074c859; pgv_info=ssid=s6867951260; ts_last=y.qq.com/; _qpsvr_localtk=0.1473183897789636; login_type=1; qm_keyst=Q_H_L_5CERcD9qtxsuaho4nXAD0djnqrk_Dp5lslx-_jYy_ZuFE0PkN018oug; tmeLoginType=2; wxunionid=; euin=oKEANKCF7inA7c**; qqmusic_key=Q_H_L_5CERcD9qtxsuaho4nXAD0djnqrk_Dp5lslx-_jYy_ZuFE0PkN018oug; psrf_qqopenid=A5A9172561051CF617E82D505D645FE4; wxopenid=; psrf_musickey_createtime=1652965754; qm_keyst=Q_H_L_5CERcD9qtxsuaho4nXAD0djnqrk_Dp5lslx-_jYy_ZuFE0PkN018oug; wxrefresh_token=; psrf_access_token_expiresAt=1660741754; psrf_qqaccess_token=765AFACDB816D72CF8B5B94B510EFB91; uin=1929687026; psrf_qqrefresh_token=9677CB9F13A21B70B68161C654EDA6D6; psrf_qqunionid=133D646103F7DFC2850D335A6FD129BF`
+      cookie: `RK=+llsvNXUZ8; ptcz=19fad43175b7253a5d54e9e0b7914d09b4993328a293df56e8ca7d799e847bec; pgv_pvid=2840085823; fqm_pvqid=082e0584-f4b9-4157-959c-6cfb8591636f; ts_uid=2636225856; ts_refer=cn.bing.com/; tmeLoginType=2; euin=oKEANKCF7inA7c**; fqm_sessionid=6b09e910-6bd2-49d7-950f-55bd2fd6ea72; pgv_info=ssid=s1683711811; ts_last=y.qq.com/; _qpsvr_localtk=0.21466587559206363; login_type=1; uin=1929687026; psrf_qqunionid=133D646103F7DFC2850D335A6FD129BF; qqmusic_key=Q_H_L_5c2wPRmKH3fMlMVKfUy1iJib6P1tRYxjeZSRxO09d6OXQH_qGcyai2w; qm_keyst=Q_H_L_5c2wPRmKH3fMlMVKfUy1iJib6P1tRYxjeZSRxO09d6OXQH_qGcyai2w; psrf_access_token_expiresAt=1660986459; psrf_qqopenid=A5A9172561051CF617E82D505D645FE4; psrf_musickey_createtime=1653210459; psrf_qqrefresh_token=9677CB9F13A21B70B68161C654EDA6D6; wxrefresh_token=; wxopenid=; psrf_qqaccess_token=765AFACDB816D72CF8B5B94B510EFB91; wxunionid=; qm_keyst=Q_H_L_5c2wPRmKH3fMlMVKfUy1iJib6P1tRYxjeZSRxO09d6OXQH_qGcyai2w`
     },
     // 用户创建的歌单
     userPlaylist: [],
