@@ -32,7 +32,7 @@
         <span class="menu_title">创建的歌单</span>
         <ul class="create_music_list">
           <li class="music_list_item " v-for="(item, index) in userPlayListArray.userPlayListArray">
-            <router-link to="`/playlist/${item.tid}`" v-if="!(index === 0)">
+            <router-link :to="'/songlist/'+item.tid" v-if="!(index === 0)">
               <div class="music_list_item_div">
                 {{item.diss_name}}
               </div>
@@ -45,9 +45,9 @@
         <span class="menu_title">收藏的歌单</span>
         <ul class="create_music_list">
           <li class="music_list_item " v-for="(item, index) in userCollectPlaylist.userCollectPlaylist">
-            <router-link to="`/playlist/${item.tid}`">
+            <router-link :to="{path: '/songlist', query:{tid: item.tid}}">
               <div class="music_list_item_div">
-                {{item.dissname}}
+                {{item.dissname}}-{{item.tid}}
               </div>
             </router-link>
           </li>

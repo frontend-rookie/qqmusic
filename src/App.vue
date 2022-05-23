@@ -14,6 +14,10 @@
     bottom: 0;
     right: 0;
     top: 0;
+    overflow: hidden;
+  }
+  html {
+    overflow: hidden;
   }
 </style>
 

@@ -48,7 +48,8 @@
             <div class="singer" v-if="searchThinkList?.singer?.count">
               <div class="singer_title">歌手</div>
               <ul class="singer_list">
-                <li class="singer_item" v-for="(item, index) in searchThinkList?.singer?.itemlist">
+                <li class="singer_item" v-for="(item, index) in searchThinkList?.singer?.itemlist"
+                    @click="handleItemClick('singer', `${item.name}`)">
                   <img class="singer_img" :src="item.pic" alt="">
                   {{item.name}}
                 </li>
@@ -58,7 +59,8 @@
             <div class="album" v-if="searchThinkList?.album?.count">
               <div class="album_title">专辑</div>
               <ul class="album_list">
-                <li class="album_item" v-for="(item, index) in searchThinkList?.album?.itemlist">
+                <li class="album_item" v-for="(item, index) in searchThinkList?.album?.itemlist"
+                    @click="handleItemClick('album', `${item.name}`)">
                   <img class="album_img" :src="item.pic" alt="">
                   {{item.name}}-{{item.singer}}
                 </li>

@@ -2,14 +2,20 @@
   <div class="player">
     <audio :src="songUrl"
            ref="audio"
-           @timeupdate="handleTimeUpdate"></audio>
+           @timeupdate="handleTimeUpdate"
+           @play="isSongPlaying = true" @pause="isSongPlaying = false" @ended="isSongPlaying = false"></audio>
     <!--      顶部显示播放进度的播放条-->
-    <div class="top_player_bar" ref="outerBar">
-      <div class="inner_player_bar" ref="innerBar"></div>
+    <div class="top_player_bar" ref="outerBar"
+         @mouseenter="isShowBall = true"
+         @mouseleave="ballMouseLeave"
+         @mousedown="handlePlayBarMouseDown">
+      <div class="inner_player_bar" ref="innerBar" ></div>
 <!--      随进度条移动的球球-->
       <div class="play_ball"
-           ref="ball" @mousedown="" @mousemove="" @mouseup=""></div>
-    </div>
+           ref="ball"
+           @mouseleave="ballMouseLeave"
+           v-show="isShowBall"></div>
+      </div>
     <div class="player_main">
 <!--    播放条左侧图片和歌曲信息-->
       <div class="left_img">
@@ -33,16 +39,24 @@
           </div>
         </div>
       </div>
-      <div class="control"><Control :songInfo="songInfo"/></div>
+      <div class="control"><Control :songInfo="songInfo"
+                                    :songHavePlayedTime="songHavePlayedTime"
+                                    :isSongPlaying="isSongPlaying"
+                                    @handlePlayPauseClick="handlePlayPauseClick"/></div>
     </div>
+    <teleport to="html"><div class="mask_for_play_bar"
+                             v-if="isShowDragMask"
+                             @mousemove="handleBallMoseMove"
+                             @mouseup="handleBallMouseUp"></div>
+    </teleport>
   </div>
+<!--  用于拖动小球监听mousemove的遮罩层-->
 </template>
 
 <script lang="ts">
 import {defineComponent, onBeforeMount, reactive, toRefs, watch, ref, computed, onMounted} from "vue";
 import axios from "axios";
 import store from "@/store";
-// import playlist from "@/views/SearchDetail/Playlist.vue";
 import Control from "@/views/Player/Control.vue";
 export default defineComponent({
   name: "Player",
@@ -107,30 +121,30 @@ export default defineComponent({
       songNameScroll() {
         clearInterval(songNameScrollTimer)
         // Todo: 记得把这里的注释打开
-        // songOuterContainer.value.scrollLeft = 0
-        // // console.log(`歌名滚动`)
-        // // console.log(`外部容器`,songOuterContainer.value.clientWidth)
-        // // console.log(`内部容器`,songInnerContainer.value.clientWidth);
-        // // 0: 表示向后滚动 1: 表示向前滚动
-        // let scrollDirection = 0;
-        // songNameScrollTimer = setInterval(() => {
-        //   // 容器的宽度之差
-        //   let subtract = songInnerContainer.value.clientWidth - songOuterContainer.value.clientWidth
-        //   // console.log(`已进入定时器`);
-        //   // console.log(subtract);
-        //   if(subtract !== 0) {
-        //     // console.log(`subtract !== 0`);
-        //     if(!scrollDirection) {
-        //       // 向后滚动
-        //       songOuterContainer.value.scrollLeft += 1
-        //       if(songOuterContainer.value.scrollLeft >= subtract) scrollDirection = 1
-        //     } else {
-        //       // 向前滚动
-        //       songOuterContainer.value.scrollLeft -= 1
-        //       if(songOuterContainer.value.scrollLeft <= 0) scrollDirection = 0
-        //     }
-        //   }
-        // },200)
+        songOuterContainer.value.scrollLeft = 0
+        // console.log(`歌名滚动`)
+        // console.log(`外部容器`,songOuterContainer.value.clientWidth)
+        // console.log(`内部容器`,songInnerContainer.value.clientWidth);
+        // 0: 表示向后滚动 1: 表示向前滚动
+        let scrollDirection = 0;
+        songNameScrollTimer = setInterval(() => {
+          // 容器的宽度之差
+          let subtract = songInnerContainer.value.clientWidth - songOuterContainer.value.clientWidth
+          // console.log(`已进入定时器`);
+          // console.log(subtract);
+          if(subtract !== 0) {
+            // console.log(`subtract !== 0`);
+            if(!scrollDirection) {
+              // 向后滚动
+              songOuterContainer.value.scrollLeft += 1
+              if(songOuterContainer.value.scrollLeft >= subtract) scrollDirection = 1
+            } else {
+              // 向前滚动
+              songOuterContainer.value.scrollLeft -= 1
+              if(songOuterContainer.value.scrollLeft <= 0) scrollDirection = 0
+            }
+          }
+        },200)
       }
 
     })
@@ -160,16 +174,21 @@ export default defineComponent({
     // 进度小球
     let ball = ref()
     const playBar = reactive({
-
+        //是否显示小球
+      isShowBall: false,
+      // 是否显示拖拽的遮罩层
+      isShowDragMask: false,
       /**
        * 随着播放更新进度条
        * */
       updateBar() {
         // console.log(audio.value.currentTime);
+        if(this.isBallMouseDown) return
+        this.songHavePlayedTime = audio.value.currentTime
         // 更新进度条的宽度
         innerBar.value.style.width = `${audio.value.currentTime / audio.value.duration * outerBar.value.clientWidth}px`
         // 更新进度小球的位置
-        ball.value.style.left = `${audio.value.currentTime / audio.value.duration * outerBar.value.clientWidth - 5}px`
+        ball.value.style.left = `${audio.value.currentTime / audio.value.duration * outerBar.value.clientWidth}px`
       },
 
       /**
@@ -179,13 +198,65 @@ export default defineComponent({
        * */
       // 鼠标是否按下小球
       isBallMouseDown: false,
+      // 随播放更新的已经播放的事件
+      songHavePlayedTime: 0,
       /**
-       * 处理鼠标按下小球的事件
+       * 处理鼠标按下进度条的事件
        * */
-      handleBallMouseDown(event:any):void {
+      handlePlayBarMouseDown(event:any):void {
         this.isBallMouseDown = true
+        this.isShowBall = true
+        this.isShowDragMask = true
+        // console.log(event.target.className);
+        if(event.target.className === 'play_ball') return
+        // console.log(event.target);
+        // 更正进度条位置
+        innerBar.value.style.width = `${event.offsetX / outerBar.value.clientWidth * 100}%`
+        // 更正小球位置
+        ball.value.style.left = innerBar.value.style.width
+        this.songHavePlayedTime = event.offsetX / outerBar.value.clientWidth * audio.value.duration
+      },
 
+      /**
+       * 处理鼠标按下并移动的事件
+       * */
+      handleBallMoseMove(event:any):void {
+        if(!this.isBallMouseDown) return
+        console.log(`mousemove`);
+        let temp:number = (event.offsetX - 200) / outerBar.value.clientWidth * 100
+        console.log(temp);
+        if(temp <0) temp = 0
+        else if(temp > 100) temp = 100
+        else {
+          // 更正进度条位置
+          innerBar.value.style.width = `${temp}%`
+          // 更正小球位置
+          ball.value.style.left = innerBar.value.style.width
+        }
+        this.songHavePlayedTime = temp / 100 * audio.value.duration
+      },
 
+      /**
+       * 处理鼠标松开的事件
+       * */
+      handleBallMouseUp() {
+        this.isShowDragMask = false
+        this.isShowBall = false
+        this.isBallMouseDown = false
+        audio.value.currentTime = this.songHavePlayedTime
+        if(audio.value.paused) {
+          audio.value.play()
+        }
+      },
+
+      /**
+       * 处理鼠标移出小球的事件
+       * */
+      ballMouseLeave() {
+        if(!this.isBallMouseDown) {
+          this.isShowBall = false;
+          // console.log(`mouseleave`);
+        }
       },
 
       /**
@@ -193,6 +264,23 @@ export default defineComponent({
        * */
       handleTimeUpdate():void {
         this.updateBar()
+      }
+    })
+
+    const control = reactive({
+      // 歌曲是否正在播放，用于按钮的显示
+      isSongPlaying: false,
+      /**
+       * 处理点击播放按钮的事件
+       * */
+      handlePlayPauseClick() {
+        // console.log(control.isSongPlaying);
+        control.isSongPlaying = !control.isSongPlaying
+        if(control.isSongPlaying) {
+          audio.value.play()
+        } else {
+          audio.value.pause()
+        }
       }
     })
 
@@ -204,6 +292,10 @@ export default defineComponent({
       player.songNameScroll();
     })
 
+    onMounted(() => {
+
+    })
+
     return {
       ...toRefs(player),
       audio,
@@ -213,7 +305,8 @@ export default defineComponent({
       innerBar,
       outerBar,
       ball,
-      ...toRefs(playBar)
+      ...toRefs(playBar),
+      ...toRefs(control),
     }
   }
 })
@@ -232,19 +325,30 @@ export default defineComponent({
   bottom: 0;
   right: 0;
   height: 70px;
-  //overflow: hidden;
+  //overflow-x: hidden;
+  //overflow-x: scroll;
+  //overflow-y: scroll;
   user-select: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   .top_player_bar {
     position: absolute;
     //display: flex;
     //flex-direction: row;
     //flex-wrap: nowrap;
+    // TODO: 不知道为什么这里的overflow-x:hidden 和 overflow-x:scroll； 会裁剪顶部
+    //overflow-x: hidden;
+    cursor: pointer;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     left: 0;
     top: 0;
     width: 100%;
     height: 3px;
-    background: #eee;
+    background: #ccc;
     //color: #31c27c;
     border-radius: 3px;
     z-index: 1;
@@ -265,14 +369,15 @@ export default defineComponent({
     }
 
     .play_ball {
-      opacity: 0;
+      opacity: 1;
       width: 10px;
       height: 10px;
       border-radius: 50%;
       position: relative;
       top: -3px;
-      left: -5px;
+      left: 0;
       background: #31c27c;
+      z-index: 999;
     }
   }
 
@@ -418,5 +523,15 @@ export default defineComponent({
       width: 100%;
     }
   }
+}
+
+.mask_for_play_bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent;
+  z-index: 3;
 }
 </style>

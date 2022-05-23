@@ -4,31 +4,64 @@
     <div class="center_control_buttons">
       <div class="play_way"></div>
       <div class="last_song"></div>
-      <div class="play_pause_button"></div>
+      <div class="play_pause_button" v-if="!isSongPlaying" @click="handlePlayPauseButtonClick"></div>
+      <div class="play_button" v-if="isSongPlaying" @click="handlePlayPauseButtonClick"></div>
       <div class="next_song"></div>
       <div class="volume"></div>
     </div>
     <div class="right_song_info">
-      <span class="time_info">00:00 / 00:00</span>
+      <span class="time_info">{{handleTime(songHavePlayedTime)}} / {{handleTime(songInfo?.interval)}}</span>
       <div class="playlist_icon"></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
-interface PropData {
+import {defineComponent, reactive, toRefs} from "vue";
 
-}
 
 export default defineComponent({
   name: "Control",
   // ts-ignore
-  props: defineProps({
+  props: {
+    // 播放歌曲的信息
     songInfo: {
-      type: Propdata,
+      type: Object,
+      default: []
+    },
+    songHavePlayedTime: {
+      type: Number,
+      default: 0
+    },
+    isSongPlaying: {
+      type: Boolean,
+      default: false
     }
-  })
+  },
+  setup(props, content) {
+    const {songInfo, songHavePlayedTime, isSongPlaying} = toRefs(props)
+
+    const control = reactive({
+      /**
+       * 处理播放时间
+       * */
+      handleTime(time:string | number):string {
+        time = Number(time)
+        const min = Math.floor(time / 60)
+        const sec = Math.floor(time % 60)
+        return `${min < 10 ? '0' + min : min}:${sec < 10 ? '0' + sec : sec}`
+      },
+      /**
+       * 处理播放暂停按钮的点击事件
+       * */
+      handlePlayPauseButtonClick() {
+        content.emit('handlePlayPauseClick')
+      }
+    })
+    return {
+      ...toRefs(control),
+    }
+  }
 })
 </script>
 
@@ -77,7 +110,7 @@ export default defineComponent({
       }
     }
 
-    .play_pause_button {
+    .play_pause_button, .play_button {
       width: 35px;
       height: 35px;
       background: #31c27c url("../../assets/Player/Control/play_white.png") no-repeat center center;
@@ -85,6 +118,11 @@ export default defineComponent({
       border-radius: 50%;
       cursor: pointer;
       margin: 5px;
+    }
+
+    .play_button {
+      background: #31c27c url("../../assets/Player/Control/pause_white.png") no-repeat center center;
+      background-size: 15px 15px;
     }
 
     .next_song {

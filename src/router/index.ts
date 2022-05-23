@@ -9,7 +9,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/recommend',
     component: () => import('@/views/Recommend/index.vue')
-  },{
+  },
+  {
     path: '/search',
     component: () => import('@/views/SearchDetail/index.vue'),
     children: [
@@ -38,6 +39,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: `/waiting`,
     component: () => import('@/views/SearchDetail/Waiting.vue')
+  },
+  {
+    path: `/songlist/:tid`,
+    component: () => import('@/views/Songlist/index.vue')
   }
 ]
 
