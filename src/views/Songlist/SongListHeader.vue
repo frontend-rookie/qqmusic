@@ -11,7 +11,7 @@
       </div>
       <div class="author_white">{{playlistDetail.desc ? playlistDetail.desc : '作者没有写任何东西'}}</div>
       <div class="control_buttons_wrapper">
-        <div class="play_all_button">播放全部</div>
+        <div class="play_all_button" @click="handleClickPlayButton">播放全部</div>
         <div class="download_button">下载</div>
         <div class="share_button">分享</div>
       </div>
@@ -21,6 +21,7 @@
 
 <script lang="ts">
 import {defineComponent, onBeforeMount, reactive, toRefs} from "vue";
+import store from "@/store";
 import Player from "@/components/Player.vue";
 
 export default defineComponent({
@@ -35,8 +36,17 @@ export default defineComponent({
   },
   setup(props, content) {
     const {playlistDetail} = toRefs(props)
-    return {
 
+    const playlist = reactive({
+      /**
+       * 处理点击 “全部播放按钮” 事件
+       * */
+      handleClickPlayButton() {
+        store.commit('setPlayListArray', playlistDetail.value.songlist)
+      }
+    })
+    return {
+      ...toRefs(playlist),
     }
   }
 })

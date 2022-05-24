@@ -8,8 +8,10 @@
     </div>
     <ul class="song_list1"
         ref="songWrapper">
-      <li class="song_item" v-for="(item, index) in songArr" :key="item.songid">
-        <div class="song_name" @click="handleSongNameClick(item.songmid)">{{item.songname}}</div>
+      <li class="song_item"
+          :class="{active: item.songmid === store.state.player.songMid && router.currentRoute.value.params.tid === playlistDetail.disstid}"
+          v-for="(item, index) in songArr" :key="item.songid">
+        <div class="song_name" @click="handleSongNameClick(item)">{{item.songname}}</div>
         <div class="singer">
             <span class="singer_name" v-for="(singer, index) in item.singer">
               {{singer.name}}&nbsp;&nbsp;&nbsp;
@@ -18,6 +20,10 @@
         <div class="time">{{handleSongTime(item.interval)}}</div>
       </li>
     </ul>
+<!--    定位正在播放歌单中的歌曲按钮和返回顶部的按钮-->
+    <div class="up_find_wrapper">
+      <div class="up_find_wrapper"></div>
+    </div>
   </div>
 </template>
 
@@ -57,14 +63,17 @@ export default defineComponent( {
       /**
        * 处理歌名点击事件
        * */
-      handleSongNameClick(songMid:string):void {
-        store.commit("setSongMid", songMid)
+      handleSongNameClick(item:any):void {
+        store.commit("setSongMid", item.songmid)
+        store.commit("addSongToPlayList",item)
       }
     })
 
     return {
       ...toRefs(song),
-      songWrapper
+      songWrapper,
+      store,
+      router
     }
   }
 })
@@ -87,6 +96,7 @@ export default defineComponent( {
   top: 0;
   right: 0;
   bottom: 0;
+  overflow-x: hidden;
 
   .sort {
     width: 100%;
@@ -146,6 +156,11 @@ export default defineComponent( {
 
       &:hover {
         background: #eee;
+      }
+
+      &.active {
+        color: #31c27c;
+        background-color: #eee;
       }
 
       div {

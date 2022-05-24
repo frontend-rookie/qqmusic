@@ -10,7 +10,7 @@
           ref="songWrapper"
           @scroll="handleSongScroll">
         <li class="song_item" v-for="(item, index) in songArr" :key="item.songid">
-          <div class="song_name" @click="handleSongNameClick(item.songmid)">{{item.songname}}</div>
+          <div class="song_name" @click="handleSongNameClick(item)">{{item.songname}}</div>
           <div class="singer">
             <span class="singer_name" v-for="(singer, index) in item.singer">
               {{singer.name}}&nbsp;&nbsp;&nbsp;
@@ -90,8 +90,9 @@ export default defineComponent( {
       /**
        * 处理歌名点击事件
        * */
-      handleSongNameClick(songMid:string):void {
-        store.commit("setSongMid", songMid)
+      handleSongNameClick(item:any):void {
+        store.commit("setSongMid", item.songmid)
+        store.commit("addSongToPlayList",item)
       }
     })
 

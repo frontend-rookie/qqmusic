@@ -3,7 +3,7 @@
     <audio :src="songUrl"
            ref="audio"
            @timeupdate="handleTimeUpdate"
-           @play="isSongPlaying = true" @pause="isSongPlaying = false" @ended="isSongPlaying = false"></audio>
+           @play="isSongPlaying = true" @pause="isSongPlaying = false" @ended="handleEndEvent"></audio>
     <!--      顶部显示播放进度的播放条-->
     <div class="top_player_bar" ref="outerBar"
          @mouseenter="isShowBall = true"
@@ -42,7 +42,9 @@
       <div class="control"><Control :songInfo="songInfo"
                                     :songHavePlayedTime="songHavePlayedTime"
                                     :isSongPlaying="isSongPlaying"
-                                    @handlePlayPauseClick="handlePlayPauseClick"/></div>
+                                    :playMode = "playMode"
+                                    @handlePlayPauseClick="handlePlayPauseClick"
+                                    @changePlayMode="changePlayMode"/></div>
     </div>
     <teleport to="html"><div class="mask_for_play_bar"
                              v-if="isShowDragMask"
@@ -271,6 +273,11 @@ export default defineComponent({
       // 歌曲是否正在播放，用于按钮的显示
       isSongPlaying: false,
       /**
+       * 播放方式
+       * @args 0 表示顺序播放，1 表示随机播放，2 表示单曲循环
+       * */
+      playMode: 0,
+      /**
        * 处理点击播放按钮的事件
        * */
       handlePlayPauseClick() {
@@ -281,7 +288,38 @@ export default defineComponent({
         } else {
           audio.value.pause()
         }
+      },
+
+      /**
+       * 改变播放方式
+       * */
+      changePlayMode() {
+        if(control.playMode === 2) control.playMode = 0
+        else control.playMode++
+      },
+
+      /**
+       * 处理audio end事件
+       * */
+      handleEndEvent() {
+        this.isSongPlaying = false
+        if(this.playMode === 0) {
+          // 顺序播放
+          if(store.state.player.playingSongIndex === store.state.player.playlistArray.length - 1) {
+            store.commit('changePlayingSong', 0)
+          }
+          else {
+            store.commit('changePlayingSong', store.state.player.playingSongIndex + 1)
+          }
+        }else if(this.playMode == 1) {
+          // 随机播放
+          store.commit('changePlayingSong', Math.floor(Math.random() * store.state.player.playlistArray.length))
+        }else if(this.playMode === 2) {
+          // 单曲循环
+          audio.value.play()
+        }
       }
+
     })
 
     onBeforeMount(async () => {

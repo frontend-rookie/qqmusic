@@ -75,5 +75,6 @@ export default defineComponent({
   right: 0;
   bottom: 0;
   overflow: auto;
+  min-width: 800px;
 }
 </style>

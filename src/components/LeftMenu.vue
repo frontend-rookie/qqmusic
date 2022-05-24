@@ -228,9 +228,23 @@ export default defineComponent({
             list-style: none;
             padding-left: 10px;
             border-radius: 5px;
+            //color: #fff!important;
+            //background-color: #1ECF9DFF!important;
 
-            &:hover {
-              background-color: #ccc;
+            a {
+              display: block;
+              text-decoration: none;
+              padding-left: 10px;
+              border-radius: 5px;
+              color: #212121;
+              &:hover {
+                background-color: #ccc;
+              }
+            }
+
+            a.active {
+                color: #fff;
+                background: #1ECF9DFF;
             }
           }
 
@@ -244,16 +258,10 @@ export default defineComponent({
             overflow: hidden;
             line-height: 35px;
             font-size: 14px;
-            color: #333333;
+            //color: #333333;
             white-space: nowrap;
             text-overflow: ellipsis;
 
-            .active {
-              .online_music {
-                color: #fff;
-                background-color: #1ECF9DFF;
-              }
-            }
           }
         }
       }

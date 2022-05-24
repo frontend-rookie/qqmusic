@@ -2,7 +2,9 @@
   <div class="control">
 <!--    播放条中心控制按钮-->
     <div class="center_control_buttons">
-      <div class="play_way"></div>
+      <div class="play_way circle" v-if="playMode === 0" @click="changePlayMode"></div>
+      <div class="play_way random" v-if="playMode === 1" @click="changePlayMode"></div>
+      <div class="play_way only" v-if="playMode === 2" @click="changePlayMode"></div>
       <div class="last_song"></div>
       <div class="play_pause_button" v-if="!isSongPlaying" @click="handlePlayPauseButtonClick"></div>
       <div class="play_button" v-if="isSongPlaying" @click="handlePlayPauseButtonClick"></div>
@@ -36,10 +38,14 @@ export default defineComponent({
     isSongPlaying: {
       type: Boolean,
       default: false
+    },
+    playMode: {
+      type: Number,
+      default: 0
     }
   },
   setup(props, content) {
-    const {songInfo, songHavePlayedTime, isSongPlaying} = toRefs(props)
+    const {songInfo, songHavePlayedTime, isSongPlaying, playMode} = toRefs(props)
 
     const control = reactive({
       /**
@@ -56,7 +62,15 @@ export default defineComponent({
        * */
       handlePlayPauseButtonClick() {
         content.emit('handlePlayPauseClick')
+      },
+
+      /*
+      * 改变播放方式
+      * */
+      changePlayMode() {
+        content.emit('changePlayMode')
       }
+
     })
     return {
       ...toRefs(control),
@@ -93,6 +107,24 @@ export default defineComponent({
       margin: 5px;
       &:hover {
         background: url("../../assets/Player/Control/circle_green.png") no-repeat;
+        background-size: 20px 20px;
+      }
+    }
+
+    .random {
+      background: url("../../assets/Player/Control/random_gray.png") no-repeat;
+      background-size: 20px 20px;
+      &:hover {
+        background: url("../../assets/Player/Control/random_green.png") no-repeat;
+        background-size: 20px 20px;
+      }
+    }
+
+    .only {
+      background: url("../../assets/Player/Control/only_gray.png") no-repeat;
+      background-size: 20px 20px;
+      &:hover {
+        background: url("../../assets/Player/Control/only_green.png") no-repeat;
         background-size: 20px 20px;
       }
     }
