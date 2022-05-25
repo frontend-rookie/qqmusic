@@ -9,8 +9,8 @@
     <ul class="song_list1"
         ref="songWrapper">
       <li class="song_item"
-          :class="{active: item.songmid === store.state.player.songMid && router.currentRoute.value.params.tid === playlistDetail.disstid}"
-          v-for="(item, index) in songArr" :key="item.songid">
+          :class="{active: item.songmid === store.state.player.songMid && store.state.player.playlistTid === playlistDetail.disstid}"
+          v-for="(item, index) in playlistDetail.songlist" :key="item.songid">
         <div class="song_name" @click="handleSongNameClick(item)">{{item.songname}}</div>
         <div class="singer">
             <span class="singer_name" v-for="(singer, index) in item.singer">
@@ -22,7 +22,10 @@
     </ul>
 <!--    定位正在播放歌单中的歌曲按钮和返回顶部的按钮-->
     <div class="up_find_wrapper">
-      <div class="up_find_wrapper"></div>
+      <div class="find_palying" title="定位"
+           v-if="store.state.player.playlistTid === playlistDetail.disstid"
+           @click="handleLocationClick"></div>
+      <div class="up" title="回到顶部" @click="handleUpClick"></div>
     </div>
   </div>
 </template>
@@ -66,6 +69,25 @@ export default defineComponent( {
       handleSongNameClick(item:any):void {
         store.commit("setSongMid", item.songmid)
         store.commit("addSongToPlayList",item)
+      },
+
+      /**
+       * 定位正在播放歌单中的歌曲
+       * */
+      handleLocationClick(){
+        for(let i = 0; i< playlistDetail.value.songlist.length-1; i++){
+          if(playlistDetail.value.songlist[i].songmid === store.state.player.songMid){
+            songWrapper.value.scrollTop = (i-6) * 50 - 10
+            break
+          }
+        }
+      },
+
+      /**
+       * 回到顶部
+       * */
+      handleUpClick(){
+        songWrapper.value.scrollTop = 0
       }
     })
 
@@ -200,6 +222,48 @@ export default defineComponent( {
       .time {
         width: 10%;
         color: #ccc;
+      }
+    }
+  }
+  .up_find_wrapper {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    width: 30px;
+    //height: 60px;
+    //border: 1px solid #000;
+    display: flex;
+    flex-direction: column-reverse;
+    background-color: #eee;
+    //z-index: 2;
+
+    .up {
+      border: 1px solid #ccc;
+      background: url("../../assets/Player/Control/up_gray.png") no-repeat center center;
+      background-size: 20px 20px;
+      cursor: pointer;
+      width: 100%;
+      height: 30px;
+
+      &:hover {
+        border: 1px solid #31c27c;
+        background: url("../../assets/Player/Control/up_green.png") no-repeat center center;
+        background-size: 20px 20px;
+      }
+    }
+
+    .find_palying {
+      border: 1px solid #ccc;
+      background: url("../../assets/Player/Control/location_gray.png") no-repeat center center;
+      background-size: 20px 20px;
+      cursor: pointer;
+      width: 100%;
+      height: 30px;
+
+      &:hover {
+        border: 1px solid #31c27c;
+        background: url("../../assets/Player/Control/location_green.png") no-repeat center center;
+        background-size: 20px 20px;
       }
     }
   }

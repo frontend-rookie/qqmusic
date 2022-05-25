@@ -43,6 +43,8 @@
                                     :songHavePlayedTime="songHavePlayedTime"
                                     :isSongPlaying="isSongPlaying"
                                     :playMode = "playMode"
+                                    @clickNextSong="clickNextSong"
+                                    @clickPreSong="clickPrevSong"
                                     @handlePlayPauseClick="handlePlayPauseClick"
                                     @changePlayMode="changePlayMode"/></div>
     </div>
@@ -317,6 +319,28 @@ export default defineComponent({
         }else if(this.playMode === 2) {
           // 单曲循环
           audio.value.play()
+        }
+      },
+
+      /**
+       * 点击上一首歌曲
+       * */
+      clickNextSong() {
+        if(store.state.player.songTotalNum - 1 === store.state.player.playingSongIndex) {
+          store.commit('changePlayingSong', 0)
+        }else{
+          store.commit('changePlayingSong', store.state.player.playingSongIndex + 1)
+        }
+      },
+
+      /**
+       * 点击上一首歌曲
+       * */
+      clickPrevSong() {
+        if(store.state.player.playingSongIndex === 0) {
+          store.commit('changePlayingSong', store.state.player.songTotalNum - 1)
+        }else{
+          store.commit('changePlayingSong', store.state.player.playingSongIndex - 1)
         }
       }
 

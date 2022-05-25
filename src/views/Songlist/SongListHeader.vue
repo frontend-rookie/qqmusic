@@ -42,7 +42,7 @@ export default defineComponent({
        * 处理点击 “全部播放按钮” 事件
        * */
       handleClickPlayButton() {
-        store.commit('setPlayListArray', playlistDetail.value.songlist)
+        store.commit('setPlayListArray', [playlistDetail.value.songlist, playlistDetail.value.disstid])
       }
     })
     return {

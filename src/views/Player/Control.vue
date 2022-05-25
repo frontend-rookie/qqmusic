@@ -5,22 +5,23 @@
       <div class="play_way circle" v-if="playMode === 0" @click="changePlayMode"></div>
       <div class="play_way random" v-if="playMode === 1" @click="changePlayMode"></div>
       <div class="play_way only" v-if="playMode === 2" @click="changePlayMode"></div>
-      <div class="last_song"></div>
+      <div class="last_song" @click="clickPreSong"></div>
       <div class="play_pause_button" v-if="!isSongPlaying" @click="handlePlayPauseButtonClick"></div>
       <div class="play_button" v-if="isSongPlaying" @click="handlePlayPauseButtonClick"></div>
-      <div class="next_song"></div>
+      <div class="next_song" @click="clickNextSong"></div>
       <div class="volume"></div>
     </div>
     <div class="right_song_info">
       <span class="time_info">{{handleTime(songHavePlayedTime)}} / {{handleTime(songInfo?.interval)}}</span>
-      <div class="playlist_icon"></div>
+      <div class="playlist_icon" @click="isShowPlaylist = true"></div>
     </div>
+    <Playlist :isShowPlaylist="isShowPlaylist" @closePlaylist="closePlaylist"/>
   </div>
 </template>
 
 <script lang="ts">
 import {defineComponent, reactive, toRefs} from "vue";
-
+import Playlist from "@/views/Player/Playlist.vue";
 
 export default defineComponent({
   name: "Control",
@@ -44,10 +45,15 @@ export default defineComponent({
       default: 0
     }
   },
+  components: {
+    Playlist
+  },
   setup(props, content) {
     const {songInfo, songHavePlayedTime, isSongPlaying, playMode} = toRefs(props)
 
     const control = reactive({
+      // 是否显示播放队列
+      isShowPlaylist: false,
       /**
        * 处理播放时间
        * */
@@ -69,8 +75,28 @@ export default defineComponent({
       * */
       changePlayMode() {
         content.emit('changePlayMode')
-      }
+      },
 
+      /**
+       * 关闭播放队列
+       * */
+      closePlaylist() {
+        control.isShowPlaylist = false
+      },
+
+      /**
+       * 点击下一首按钮
+       * */
+      clickNextSong() {
+        content.emit('clickNextSong')
+      },
+
+      /**
+       * 点击上一首歌曲
+       * */
+      clickPreSong() {
+        content.emit('clickPreSong')
+      },
     })
     return {
       ...toRefs(control),
