@@ -9,9 +9,9 @@
           <div class="title">播放队列</div>
           <div class="song_num">共{{store.state.player.songTotalNum}}首歌曲</div>
         </div>
-        <ul class="song_list">
+        <ul class="song_list" ref="playlistUl">
           <li class="song_item"
-              v-for="(item, index) in store.state.player.playlistArray" :class="{active: store.state.player.playingSongIndex === index}">
+              v-for="(item, index) in store.state.player.playlistArray" :class="{active: store.state.player.playlistArray[store.state.player.playingSongIndex].songmid === item.songmid}">
             <div class="left_info">
               <div class="song_name">{{item.songname}}</div>
               <div class="singer_names">
@@ -23,17 +23,18 @@
             <div class="play_del_buttons">
               <div class="play_button" title="播放" @click="store.commit('changePlayingSong', index)"></div>
               <div class="del_button" title=删除 @click="store.commit('deleteSongFromPlayList', index)"></div>
+<!--              <div class="del_button" title="删除"></div>-->
             </div>
           </li>
         </ul>
-        <div class="bottom_button" @click="closePlaylist">收起</div>
+        <div class="bottom_button" @click="closePlaylist" ref="dom">收起</div>
       </div>
     </div>
   </teleport>
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, toRefs} from "vue";
+import {defineComponent, reactive, toRefs, ref, onMounted, watch, computed} from "vue";
 import store from "@/store";
 export default defineComponent({
   name: "Playlist",
@@ -46,6 +47,9 @@ export default defineComponent({
   },
   emits: ["closePlaylist"],
   setup(props,{emit}) {
+    let {isShowPlaylist} = toRefs(props)
+    let playlistUl = ref()
+    let dom = ref()
     const playlist = reactive({
       /**
        * 处理播放时间
@@ -61,11 +65,34 @@ export default defineComponent({
        * */
       closePlaylist() {
         emit('closePlaylist')
+      },
+
+      /**
+       * 定位到正在播放的歌曲
+       * */
+      locatePlayingSong() {
+        setTimeout(() => {
+          console.log(playlistUl.value);
+          playlistUl.value.scrollTop = (store.state.player.playingSongIndex - 3) * 60
+        }, 10)
       }
+    })
+
+    watch(() => isShowPlaylist.value, (newVal) => {
+      // console.log(`检测到播放列表是否显示`);
+      if (newVal) {
+        playlist.locatePlayingSong()
+      }
+    })
+
+    onMounted(() => {
+      // playlist.locatePlayingSong()
     })
     return {
       store,
-      ...toRefs(playlist)
+      ...toRefs(playlist),
+      playlistUl,
+      dom
     }
   }
 })
@@ -230,12 +257,22 @@ export default defineComponent({
             background: #f0f0f0 url("../../assets/Player/Control/play_black.png") no-repeat center center;
             background-size: 20px 20px;
             cursor: pointer;
+
+            &:hover {
+              background: #f0f0f0 url("../../assets/Player/Control/play_green.png") no-repeat center center;
+              background-size: 20px 20px;
+            }
           }
 
           .del_button {
             background: #f0f0f0 url("../../assets/Player/Control/del_black.png") no-repeat center center;
             background-size: 20px 20px;
             cursor: pointer;
+
+            &:hover {
+              background: #f0f0f0 url("../../assets/Player/Control/del_green.png") no-repeat center center;
+              background-size: 20px 20px;
+            }
           }
         }
       }

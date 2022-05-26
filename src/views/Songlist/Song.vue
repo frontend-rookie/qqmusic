@@ -52,7 +52,7 @@ export default defineComponent( {
     const song = reactive({
       songWrapper: null,
       // 存储歌曲信息
-      songArr:computed(() => playlistDetail.value.songlist) ,
+      songArr:playlistDetail.value.songlist,
       /**
        * 处理歌曲的总时长
        * @param interval 秒

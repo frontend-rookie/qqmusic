@@ -46,7 +46,8 @@
                                     @clickNextSong="clickNextSong"
                                     @clickPreSong="clickPrevSong"
                                     @handlePlayPauseClick="handlePlayPauseClick"
-                                    @changePlayMode="changePlayMode"/></div>
+                                    @changePlayMode="changePlayMode"
+                                    @changeVolume="changVolume"/></div>
     </div>
     <teleport to="html"><div class="mask_for_play_bar"
                              v-if="isShowDragMask"
@@ -308,6 +309,10 @@ export default defineComponent({
         if(this.playMode === 0) {
           // 顺序播放
           if(store.state.player.playingSongIndex === store.state.player.playlistArray.length - 1) {
+            // console.log(`已经是最后一首了`);
+            if(store.state.player.playingSongIndex === 0) {
+              audio.value.play()
+            }
             store.commit('changePlayingSong', 0)
           }
           else {
@@ -342,7 +347,14 @@ export default defineComponent({
         }else{
           store.commit('changePlayingSong', store.state.player.playingSongIndex - 1)
         }
-      }
+      },
+
+      /**
+       * 改变音量
+       * */
+      changVolume(volume:number) {
+        audio.value.volume = volume
+      },
 
     })
 
