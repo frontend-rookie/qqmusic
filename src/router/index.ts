@@ -43,7 +43,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: `/songlist/:tid`,
     component: () => import('@/views/Songlist/index.vue')
+  },
+  {
+    path: '/lyric',
+    component: () => import('@/components/Lyric.vue')
   }
+
 ]
 
 const router = createRouter({

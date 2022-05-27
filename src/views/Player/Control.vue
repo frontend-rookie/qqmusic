@@ -9,7 +9,7 @@
       <div class="play_pause_button" v-if="!isSongPlaying" @click="handlePlayPauseButtonClick"></div>
       <div class="play_button" v-if="isSongPlaying" @click="handlePlayPauseButtonClick"></div>
       <div class="next_song" @click="clickNextSong"></div>
-      <div class="volume" @click.self="isShowVolume = !isShowVolume">
+      <div class="volume" @click.self="handleVolumeClick ">
 <!--        点击音量按钮显示的音量控件-->
         <div class="volume_control_wrapper" v-if="isShowVolume">
           <div class="volume_outer_bar" @mousedown="handleVolumeMousedown" ref="outerBar">
@@ -138,6 +138,18 @@ export default defineComponent({
       isMouseDown: false,
 
       /**
+       * 音量按钮点击事件
+       * */
+      handleVolumeClick() {
+        this.isShowVolume = !this.isShowVolume
+        if(this.isShowVolume) {
+          setTimeout(() => {
+            innerBar.value.style.height = `${this.currentVolume}%`
+          },0)
+        }
+      },
+
+      /**
        * 处理音量外部控件的鼠标按下事件
        * */
       handleVolumeMousedown(event:MouseEvent) {
@@ -147,6 +159,11 @@ export default defineComponent({
         let {top, height} = outerBar.value.getBoundingClientRect()
         // 调节成的音量大小
         let volumeNum:number = (- event.clientY + top + height ) / height * 100
+        if(volumeNum > 100) {
+          volumeNum = 100
+        }else if(volumeNum < 0) {
+          volumeNum = 0
+        }
         innerBar.value.style.height = volumeNum + '%'
         this.currentVolume = volumeNum
         this.changeVolume()
@@ -320,7 +337,7 @@ export default defineComponent({
 
           .volume_inner_bar {
             width: 5px;
-            height: 100%;
+            //height: 100%;
             background: #31c27c;
             border-radius: 5px;
             position: absolute;

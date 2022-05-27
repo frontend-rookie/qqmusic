@@ -5,7 +5,7 @@ export default createStore({
     userInfo: {
       name: '『doki-doki』',
       qqNumber: `1929687026`,
-      cookie: `pgv_pvid=9288439776; fqm_pvqid=28cb88b3-28a3-449c-b841-d032251037ec; ts_uid=9668736836; RK=8llk7NXkZ8; ptcz=88ee5a96e5097547c225d3f31e9ac68771304090952142a395477dab910d7762; euin=oKEANKCF7inA7c**; tmeLoginType=2; fqm_sessionid=5239871a-4ce8-44c7-a18d-d9efeb66dc2d; pgv_info=ssid=s7843863600; ts_last=y.qq.com/; _qpsvr_localtk=0.10054482282259447; login_type=1; qm_keyst=Q_H_L_5FD9Uftx_bs78r_FfhRL4-m1YIeTnyi3MtK8Y50CTToAUR-ntImrnmA; uin=1929687026; wxrefresh_token=; psrf_qqopenid=A5A9172561051CF617E82D505D645FE4; psrf_qqunionid=133D646103F7DFC2850D335A6FD129BF; qqmusic_key=Q_H_L_5FD9Uftx_bs78r_FfhRL4-m1YIeTnyi3MtK8Y50CTToAUR-ntImrnmA; wxunionid=; psrf_musickey_createtime=1653565635; psrf_qqaccess_token=765AFACDB816D72CF8B5B94B510EFB91; psrf_access_token_expiresAt=1661341635; psrf_qqrefresh_token=9677CB9F13A21B70B68161C654EDA6D6; qm_keyst=Q_H_L_5FD9Uftx_bs78r_FfhRL4-m1YIeTnyi3MtK8Y50CTToAUR-ntImrnmA; wxopenid=`
+      cookie: `pgv_pvid=9288439776; fqm_pvqid=28cb88b3-28a3-449c-b841-d032251037ec; ts_uid=9668736836; RK=8llk7NXkZ8; ptcz=88ee5a96e5097547c225d3f31e9ac68771304090952142a395477dab910d7762; euin=oKEANKCF7inA7c**; tmeLoginType=2; fqm_sessionid=bc895e7d-0b43-413a-971d-11bd41db3a57; pgv_info=ssid=s6598375483; ts_last=y.qq.com/; _qpsvr_localtk=0.2936979782123581; login_type=1; psrf_qqunionid=133D646103F7DFC2850D335A6FD129BF; psrf_qqaccess_token=765AFACDB816D72CF8B5B94B510EFB91; psrf_access_token_expiresAt=1661429936; qm_keyst=Q_H_L_57X6rpjc5BqLfNjFPQ-MI6Q_7K3EN7dsKbO1o2Oyv6-OqFugv6nqb2w; psrf_qqopenid=A5A9172561051CF617E82D505D645FE4; psrf_musickey_createtime=1653653936; wxrefresh_token=; wxopenid=; qm_keyst=Q_H_L_57X6rpjc5BqLfNjFPQ-MI6Q_7K3EN7dsKbO1o2Oyv6-OqFugv6nqb2w; psrf_qqrefresh_token=9677CB9F13A21B70B68161C654EDA6D6; wxunionid=; qqmusic_key=Q_H_L_57X6rpjc5BqLfNjFPQ-MI6Q_7K3EN7dsKbO1o2Oyv6-OqFugv6nqb2w; uin=1929687026`
     },
     // 用户创建的歌单
     userPlaylist: [],
@@ -21,6 +21,10 @@ export default createStore({
       playlistTid: 0,
       // 播放队列中的歌曲数目
       songTotalNum: 1,
+    },
+    lyric: {
+      // 当前播放的时间
+      currentTime: 0,
     }
   },
   mutations: {
@@ -88,6 +92,12 @@ export default createStore({
         // 如果删除的是正在播放的上面的歌曲，需要将正在播放的index-1
         state.player.playingSongIndex -= 1
       }
+    },
+    /**
+     * 更改播放时间
+     * */
+    setCurrentTime(state,payload:number):void {
+      state.lyric.currentTime = payload
     }
   },
   actions: {

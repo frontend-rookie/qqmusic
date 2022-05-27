@@ -19,7 +19,7 @@
     <div class="player_main">
 <!--    播放条左侧图片和歌曲信息-->
       <div class="left_img">
-        <div class="img_wrapper">
+        <div class="img_wrapper" @click="router.push(`/lyric`)">
           <img :src="`https://y.gtimg.cn/music/photo_new/T002R300x300M000${songInfo.album?.mid}.jpg`" alt="" draggable="false">
           <div class="img_mask"></div>
         </div>
@@ -62,6 +62,7 @@
 import {defineComponent, onBeforeMount, reactive, toRefs, watch, ref, computed, onMounted} from "vue";
 import axios from "axios";
 import store from "@/store";
+import router from "@/router";
 import Control from "@/views/Player/Control.vue";
 export default defineComponent({
   name: "Player",
@@ -268,6 +269,7 @@ export default defineComponent({
        * 处理时间更新事件
        * */
       handleTimeUpdate():void {
+        store.commit('setCurrentTime',audio.value.currentTime)
         this.updateBar()
       }
     })
@@ -381,6 +383,7 @@ export default defineComponent({
       ball,
       ...toRefs(playBar),
       ...toRefs(control),
+      router
     }
   }
 })
