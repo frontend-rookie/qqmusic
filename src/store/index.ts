@@ -5,7 +5,7 @@ export default createStore({
     userInfo: {
       name: '『doki-doki』',
       qqNumber: `1929687026`,
-      cookie: `pgv_pvid=9288439776; fqm_pvqid=28cb88b3-28a3-449c-b841-d032251037ec; ts_uid=9668736836; RK=8llk7NXkZ8; ptcz=88ee5a96e5097547c225d3f31e9ac68771304090952142a395477dab910d7762; euin=oKEANKCF7inA7c**; tmeLoginType=2; fqm_sessionid=bc895e7d-0b43-413a-971d-11bd41db3a57; pgv_info=ssid=s6598375483; ts_last=y.qq.com/; _qpsvr_localtk=0.2936979782123581; login_type=1; psrf_qqunionid=133D646103F7DFC2850D335A6FD129BF; psrf_qqaccess_token=765AFACDB816D72CF8B5B94B510EFB91; psrf_access_token_expiresAt=1661429936; qm_keyst=Q_H_L_57X6rpjc5BqLfNjFPQ-MI6Q_7K3EN7dsKbO1o2Oyv6-OqFugv6nqb2w; psrf_qqopenid=A5A9172561051CF617E82D505D645FE4; psrf_musickey_createtime=1653653936; wxrefresh_token=; wxopenid=; qm_keyst=Q_H_L_57X6rpjc5BqLfNjFPQ-MI6Q_7K3EN7dsKbO1o2Oyv6-OqFugv6nqb2w; psrf_qqrefresh_token=9677CB9F13A21B70B68161C654EDA6D6; wxunionid=; qqmusic_key=Q_H_L_57X6rpjc5BqLfNjFPQ-MI6Q_7K3EN7dsKbO1o2Oyv6-OqFugv6nqb2w; uin=1929687026`
+      cookie: `pgv_pvid=9288439776; fqm_pvqid=28cb88b3-28a3-449c-b841-d032251037ec; ts_uid=9668736836; RK=8llk7NXkZ8; ptcz=88ee5a96e5097547c225d3f31e9ac68771304090952142a395477dab910d7762; euin=oKEANKCF7inA7c**; tmeLoginType=2; fqm_sessionid=3369a463-c144-4244-a316-44b5347e3db7; pgv_info=ssid=s7386739179; ts_last=y.qq.com/; _qpsvr_localtk=0.4708198834283843; login_type=1; wxunionid=; qqmusic_key=Q_H_L_5pqz2Ysg7Ablj8AHbzebUKj54B1Ff-49mybwu9e0SP93VkmoCkCTrJg; psrf_qqaccess_token=765AFACDB816D72CF8B5B94B510EFB91; psrf_musickey_createtime=1653832500; psrf_qqunionid=133D646103F7DFC2850D335A6FD129BF; wxopenid=; wxrefresh_token=; psrf_qqrefresh_token=9677CB9F13A21B70B68161C654EDA6D6; uin=1929687026; psrf_access_token_expiresAt=1661608500; qm_keyst=Q_H_L_5pqz2Ysg7Ablj8AHbzebUKj54B1Ff-49mybwu9e0SP93VkmoCkCTrJg; qm_keyst=Q_H_L_5pqz2Ysg7Ablj8AHbzebUKj54B1Ff-49mybwu9e0SP93VkmoCkCTrJg; psrf_qqopenid=A5A9172561051CF617E82D505D645FE4`
     },
     // 用户创建的歌单
     userPlaylist: [],
@@ -25,6 +25,8 @@ export default createStore({
     lyric: {
       // 当前播放的时间
       currentTime: 0,
+      // 有翻译的时候，用户选择是否显示翻译
+      isUserShowTrans: false
     }
   },
   mutations: {
@@ -98,6 +100,12 @@ export default createStore({
      * */
     setCurrentTime(state,payload:number):void {
       state.lyric.currentTime = payload
+    },
+    /**
+     * 更改用户是否显示翻译
+     * */
+    setUserShowTrans(state,payload:boolean):void {
+      state.lyric.isUserShowTrans = payload
     }
   },
   actions: {

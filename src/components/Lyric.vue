@@ -18,9 +18,14 @@
       <div class="album_name">专辑：{{songDetail.album?.title}}</div>
       </div>
       <ul class="lyric_outer_wrapper" ref="lyricWrapper">
-          <li class="lyric_item" v-for="(str, index) in haveHandledLyric" :class="{active: index === currentIndex}">{{str.lyric}}</li>
+          <li class="lyric_item" v-for="(str, index) in haveHandledData" :class="{active: index === currentIndex}">
+            <div class="lyric_line">{{str.lyric.lyric}}</div>
+            <div class="trans_line">{{str.trans}}</div>
+          </li>
       </ul>
     </div>
+<!--    是否显示翻译按钮-->
+    <div class="translation_button" v-if="isShowTransButton" >翻译</div>
   </div>
 </template>
 
@@ -53,6 +58,7 @@ export default defineComponent( {
       haveHandledLyric: [],
       // 处理后的歌词翻译信息
       haveHandledTrans: [],
+      haveHandledData:[],
       /**
        * 获取正在播放的歌曲的歌词
        * */
@@ -65,6 +71,28 @@ export default defineComponent( {
         this.haveHandledLyric = this.handleLyric(this.lyricData)
         // @ts-ignore
         this.haveHandledTrans = this.handleLyric(this.transData)
+        if(this.haveHandledTrans.length !== 0) {
+          // 当有翻译时候
+          this.haveHandledLyric.forEach((item, index) => {
+            // @ts-ignore
+            this.haveHandledData.push({
+              lyric: item,
+              // @ts-ignore
+              trans: this.haveHandledTrans[index].lyric.replace("//", ""),
+            })
+          })
+        }else{
+          // 当没有翻译的时候
+          this.haveHandledLyric.forEach((item, index) => {
+            // @ts-ignore
+            this.haveHandledData.push({
+              lyric: item,
+              // @ts-ignore
+              trans: "",
+            })
+          })
+        }
+
       },
       // 歌曲详情
       songDetail: {},
@@ -88,7 +116,10 @@ export default defineComponent( {
       handleLyric(OriginLyric:string) {
         let lyric = OriginLyric.split("[offset:0]\n")[1]
         // 如果没有翻译就直接返回
-        if(lyric === undefined) return []
+        if(lyric === undefined){
+          this.isShowTransButton = false
+          return []
+        }
         let lyricArr = lyric.split("\n")
         let lyricArr2 = []
         for (let i = 0; i < lyricArr.length; i++) {
@@ -114,7 +145,11 @@ export default defineComponent( {
        * */
       currentTime: computed(() => store.state.lyric.currentTime),
       // 正在播放歌词的索引值
-      currentIndex: 0
+      currentIndex: 0,
+      // 是否显示翻译按钮
+      isShowTransButton: true,
+      // 有翻译的时候，用户选择是否显示翻译
+      isUserShowTrans: false
 
     })
 
@@ -236,6 +271,8 @@ export default defineComponent( {
         //border: 1px solid #fff;
         color: #fff;
         overflow: scroll;
+        font-family: "楷体", serif;
+        font-weight: bold;
         &::-webkit-scrollbar {
           display: none;
         }
@@ -253,6 +290,15 @@ export default defineComponent( {
           }
         }
       }
+    }
+
+    .translation_button {
+      position: absolute;
+      right: 30px;
+      bottom: 30px;
+      width: 30px;
+      height: 30px;
+      background-color: red;
     }
   }
 </style>
