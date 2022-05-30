@@ -18,14 +18,17 @@
       <div class="album_name">专辑：{{songDetail.album?.title}}</div>
       </div>
       <ul class="lyric_outer_wrapper" ref="lyricWrapper">
-          <li class="lyric_item" v-for="(str, index) in haveHandledData" :class="{active: index === currentIndex}">
-            <div class="lyric_line">{{str.lyric.lyric}}</div>
-            <div class="trans_line">{{str.trans}}</div>
+          <li class="lyric_item" v-for="(str, index) in haveHandledLyric" :class="{active: index === currentIndex}">
+            <div class="lyric_line">{{handlelyricLine(str.lyric)}}</div>
+            <div class="trans_line" v-if="isUserShowTrans">{{handleTranslation(index)}}</div>
           </li>
       </ul>
     </div>
 <!--    是否显示翻译按钮-->
-    <div class="translation_button" v-if="isShowTransButton" >翻译</div>
+    <div class="translation_button"
+         v-if="isShowTransButton"
+         :class="{showTrans: isUserShowTrans}"
+         @click="store.commit('setUserShowTrans', !isUserShowTrans)">译</div>
   </div>
 </template>
 
@@ -71,29 +74,15 @@ export default defineComponent( {
         this.haveHandledLyric = this.handleLyric(this.lyricData)
         // @ts-ignore
         this.haveHandledTrans = this.handleLyric(this.transData)
-        if(this.haveHandledTrans.length !== 0) {
-          // 当有翻译时候
-          this.haveHandledLyric.forEach((item, index) => {
-            // @ts-ignore
-            this.haveHandledData.push({
-              lyric: item,
-              // @ts-ignore
-              trans: this.haveHandledTrans[index].lyric.replace("//", ""),
-            })
-          })
-        }else{
-          // 当没有翻译的时候
-          this.haveHandledLyric.forEach((item, index) => {
-            // @ts-ignore
-            this.haveHandledData.push({
-              lyric: item,
-              // @ts-ignore
-              trans: "",
-            })
-          })
-        }
-
       },
+          /**
+           * 处理歌词的翻译
+           */
+          handleTranslation(index:number):string {
+            if(this.haveHandledTrans.length === 0) return ``
+                // @ts-ignore
+            else return this.haveHandledTrans[index].lyric.replace("//", "")
+          },
       // 歌曲详情
       songDetail: {},
       /**
@@ -149,13 +138,19 @@ export default defineComponent( {
       // 是否显示翻译按钮
       isShowTransButton: true,
       // 有翻译的时候，用户选择是否显示翻译
-      isUserShowTrans: false
-
+      isUserShowTrans: computed(() => store.state.lyric.isUserShowTrans),
+      /**
+       * 处理歌词，将里面的Base64转换为正常的符号
+       * */
+      handlelyricLine(lyric:string):string {
+       return lyric.replace(/&apos;/g, "'")
+      }
     })
 
     watch(() => lyric.songMid, async () => {
       await lyric.getLyric()
       await lyric.getSongDetail()
+      // lyric.haveHandledData = []
     })
 
     // 监测播放时间的变化滚动歌词
@@ -184,7 +179,8 @@ export default defineComponent( {
     })
     return {
       ...toRefs(lyric),
-      lyricWrapper
+      lyricWrapper,
+      store
     };
   }
 })
@@ -283,10 +279,18 @@ export default defineComponent( {
           text-align: center;
           margin-bottom: 10px;
 
+          .trans_line {
+            font-size: 18px;
+          }
+
           &.active {
             //font-size: 20px;
             color: #31c27c;
             font-size: 27px;
+
+            .trans_line {
+              font-size: 23px;
+            }
           }
         }
       }
@@ -298,7 +302,19 @@ export default defineComponent( {
       bottom: 30px;
       width: 30px;
       height: 30px;
-      background-color: red;
+      //background-color: red;
+      font-size: 20px;
+      line-height: 26px;
+      border-radius: 5px;
+      border: 2px solid #fff;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+
+      &.showTrans {
+        color: #31c27c;
+        border: 2px solid #31c27c;
+      }
     }
   }
 </style>

@@ -26,7 +26,7 @@ export default createStore({
       // 当前播放的时间
       currentTime: 0,
       // 有翻译的时候，用户选择是否显示翻译
-      isUserShowTrans: false
+      isUserShowTrans: true
     }
   },
   mutations: {
